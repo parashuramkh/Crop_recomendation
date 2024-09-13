@@ -5,3 +5,4 @@ scikit-learn
 joblib
 requests
 imbalanced-learn
+gunicorn
