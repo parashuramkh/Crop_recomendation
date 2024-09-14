@@ -11,7 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 app = Flask(__name__)
 
 # Load the trained model
-model = joblib.load('your_model.pkl')  # Ensure this matches the actual model filename
+model = joblib.load('model.pkl')  # Ensure this matches the actual model filename
 
 # Load the datasets
 pin_data = pd.read_csv('PIN.csv', encoding='latin1')
