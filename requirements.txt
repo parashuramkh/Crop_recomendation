@@ -8,3 +8,5 @@ joblib
 requests
 imbalanced-learn
 gunicorn
+numpy==1.21.6
+Cython==0.29.24
