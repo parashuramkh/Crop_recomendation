@@ -33,11 +33,15 @@ def fetch_weather_data(lat, lon, api_key):
         print(f"Error fetching weather data: {e}")
         return None
 
+@app.route('/')
+def index():
+    return "Welcome to the Crop Prediction API!"
+
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
-    user_pincode = data.get('pincode')
-    land_size = data.get('land_size')
+    user_pincode = data['pincode']
+    land_size = data['land_size']
 
     if user_pincode in pin_data['Pincode'].astype(str).values:
         row = pin_data[pin_data['Pincode'] == int(user_pincode)].iloc[0]
