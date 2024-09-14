@@ -8,7 +8,6 @@ import urllib.request
 import json
 from datetime import datetime
 from sklearn.preprocessing import LabelEncoder
-import os
 
 app = Flask(__name__)
 
@@ -45,7 +44,7 @@ def predict():
         longitude = row['Longitude']
 
         # Fetch weather data
-        api_key = os.getenv('API_KEY')  # Get the API key from environment variables
+        api_key = 'DCDVS6HGLC8S6F657B22M9NNM'  # Keep your API key here
         weather_data = fetch_weather_data(latitude, longitude, api_key)
 
         if weather_data is None:
