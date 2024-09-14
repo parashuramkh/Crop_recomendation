@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # Load the datasets from the cloned GitHub repository
 pin_data = pd.read_csv('PIN.csv', encoding='latin1')
-apc_data = pd.read_csv('Crop_recomendation/APC.csv', encoding='latin1')
+apc_data = pd.read_csv('APC.csv', encoding='latin1')
 
 # Load the model
 model = joblib.load('model.pkl')  # Ensure this path is correct
