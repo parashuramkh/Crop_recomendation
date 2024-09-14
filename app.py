@@ -1,3 +1,4 @@
+# app.py
 # -*- coding: utf-8 -*-
 from flask import Flask, request, jsonify
 import pandas as pd
@@ -7,8 +8,7 @@ import urllib.request
 import json
 from datetime import datetime
 from sklearn.preprocessing import LabelEncoder
-from urllib.parse import quote as url_quote
-
+import os
 
 app = Flask(__name__)
 
@@ -21,7 +21,6 @@ apc_data = pd.read_csv('APC.csv', encoding='latin1')
 
 # Initialize the label encoder
 label_encoder = LabelEncoder()
-# Fit the label encoder with the crop labels from your dataset
 label_encoder.fit(apc_data['Crop'].unique())  # Ensure 'Crop' column exists in apc_data
 
 def fetch_weather_data(lat, lon, api_key):
@@ -46,7 +45,7 @@ def predict():
         longitude = row['Longitude']
 
         # Fetch weather data
-        api_key = 'DCDVS6HGLC8S6F657B22M9NNM'  # Replace with your actual API key
+        api_key = os.getenv('API_KEY')  # Get the API key from environment variables
         weather_data = fetch_weather_data(latitude, longitude, api_key)
 
         if weather_data is None:
@@ -76,4 +75,4 @@ def predict():
         return jsonify({"error": "Pincode not found."}), 404
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
