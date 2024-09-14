@@ -59,8 +59,8 @@ def predict():
 
             # Analyze weather data
             current_day = weather_data['days'][0]
-            temperature = current_day['temp']
-            humidity = current_day['humidity']
+            temperature = current_day.get('temp', 0)  # Default to 0 if not found
+            humidity = current_day.get('humidity', 0)  # Default to 0 if not found
 
             # Prepare features for prediction
             features = np.array([[latitude, longitude, temperature, humidity]])
