@@ -7,6 +7,8 @@ import urllib.request
 import json
 from datetime import datetime
 from sklearn.preprocessing import LabelEncoder
+from urllib.parse import quote as url_quote
+
 
 app = Flask(__name__)
 
