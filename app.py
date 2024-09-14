@@ -85,19 +85,21 @@ def predict():
 
             # Prepare output message with a button to try another pincode
             return render_template_string('''
-                <h1>Crop Recommendation</h1>
+                <h1>Thank you for Using the Crop Recommendation system results for your Pincode: {{ user_pincode }} is below </h1>
                 <h2>Location Details</h2>
                 <p>Pincode: {{ user_pincode }}</p>
                 <p>Place Name: {{ place_name }}</p>
                 <p>District: {{ district }}</p>
                 <p>State Name: {{ state_name }}</p>
-                <h2>Weather Information</h2>
+                <h2>The Weather Information for your Pincode: {{ user_pincode }} is below </h2>
                 <p>Temperature: {{ temperature }} °F</p>
                 <p>Humidity: {{ humidity }} %</p>
-                <h2>Recommended Crop</h2>
+                <h2>Optimized Crop information for your Pincode: {{ user_pincode }} is below</h2>
                 <p>Predicted Crop: {{ predicted_crop }}</p>
-                <p>Average Yield: {{ average_yield }} kgs/acre</p>
-                <p>Estimated Production for {{ land_size }} acres: {{ estimated_production }} kgs</p>
+                <p>The Average Yield per acre from this can be : {{ average_yield }} kgs/acre</p>
+                <p>The Total Estimated Production for {{ land_size }} acres: {{ estimated_production }} kgs</p>
+                <h2>Thank You for using the crop optimization system</h2>
+                <p> If you have any feedback or comments, please do write to parashuramsu@gmail.com</p>
                 <form action="/" method="get">
                     <button type="submit">Try Another Pincode</button>
                 </form>
