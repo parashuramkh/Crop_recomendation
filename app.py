@@ -8,7 +8,6 @@ import urllib.request
 import json
 from datetime import datetime
 from sklearn.preprocessing import LabelEncoder
-import os
 
 app = Flask(__name__)
 
@@ -23,8 +22,11 @@ apc_data = pd.read_csv('APC.csv', encoding='latin1')
 label_encoder = LabelEncoder()
 label_encoder.fit(apc_data['Crop'].unique())  # Ensure 'Crop' column exists in apc_data
 
-def fetch_weather_data(lat, lon, api_key):
-    weather_api_query = f'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{lat},{lon}/{datetime.today().strftime("%Y-%m-%d")}?unitGroup=us&key={api_key}&contentType=json'
+# Directly define your API key
+API_KEY = 'DCDVS6HGLC8S6F657B22M9NNM'  # Replace with your actual API key
+
+def fetch_weather_data(lat, lon, start_date):
+    weather_api_query = f'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{lat},{lon}/{start_date}?unitGroup=us&key={API_KEY}&contentType=json'
     print(f"Fetching weather data from: {weather_api_query}")  # Log the URL
     try:
         response = urllib.request.urlopen(weather_api_query)
@@ -51,8 +53,8 @@ def predict():
             longitude = row['Longitude']
 
             # Fetch weather data
-            api_key = os.getenv('API_KEY')  # Get the API key from environment variables
-            weather_data = fetch_weather_data(latitude, longitude, api_key)
+            start_date = datetime.today().strftime('%Y-%m-%d')  # Use the current date
+            weather_data = fetch_weather_data(latitude, longitude, start_date)
 
             if weather_data is None:
                 return jsonify({"error": "Error fetching weather data."}), 500
