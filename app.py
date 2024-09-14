@@ -1,6 +1,4 @@
-# app.py
-# -*- coding: utf-8 -*-
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 import pandas as pd
 import numpy as np
 import joblib
@@ -11,12 +9,12 @@ from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
 
-# Load the trained model
-model = joblib.load('model.pkl')  # Ensure this matches the actual model filename
+# Load the datasets from the cloned GitHub repository
+pin_data = pd.read_csv('Crop_recomendation/PIN.csv', encoding='latin1')
+apc_data = pd.read_csv('Crop_recomendation/APC.csv', encoding='latin1')
 
-# Load the datasets
-pin_data = pd.read_csv('PIN.csv', encoding='latin1')
-apc_data = pd.read_csv('APC.csv', encoding='latin1')
+# Load the model
+model = joblib.load('Crop_recomendation/model.pkl')  # Ensure this path is correct
 
 # Initialize the label encoder
 label_encoder = LabelEncoder()
@@ -38,19 +36,30 @@ def fetch_weather_data(lat, lon, start_date):
 
 @app.route('/')
 def index():
-    return "Welcome to the Crop Prediction API!"
+    return '''
+        <h1>Crop Recommendation</h1>
+        <form method="post" action="/predict">
+            <label for="pincode">Enter Pincode:</label>
+            <input type="text" id="pincode" name="pincode" required>
+            <label for="land_size">Enter Land Size (acres):</label>
+            <input type="number" id="land_size" name="land_size" step="0.1" required>
+            <button type="submit">Submit</button>
+        </form>
+    '''
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        data = request.json
-        user_pincode = data['pincode']
-        land_size = data['land_size']
+        user_pincode = request.form['pincode']
+        land_size = float(request.form['land_size'])
 
         if user_pincode in pin_data['Pincode'].astype(str).values:
             row = pin_data[pin_data['Pincode'] == int(user_pincode)].iloc[0]
             latitude = row['Latitude']
             longitude = row['Longitude']
+            place_name = row['Placename']
+            district = row['District']
+            state_name = row['StateName']
 
             # Fetch weather data
             start_date = datetime.today().strftime('%Y-%m-%d')  # Use the current date
@@ -74,11 +83,28 @@ def predict():
             average_yield = crop_data['Average_Yield'].values[0]
             estimated_production = land_size * average_yield
 
-            return jsonify({
-                "predicted_crop": predicted_crop[0],
-                "average_yield": average_yield,
-                "estimated_production": estimated_production
-            })
+            # Prepare output message with a button to try another pincode
+            return render_template_string('''
+                <h1>Crop Recommendation</h1>
+                <h2>Location Details</h2>
+                <p>Pincode: {{ user_pincode }}</p>
+                <p>Place Name: {{ place_name }}</p>
+                <p>District: {{ district }}</p>
+                <p>State Name: {{ state_name }}</p>
+                <h2>Weather Information</h2>
+                <p>Temperature: {{ temperature }} °F</p>
+                <p>Humidity: {{ humidity }} %</p>
+                <h2>Recommended Crop</h2>
+                <p>Predicted Crop: {{ predicted_crop }}</p>
+                <p>Average Yield: {{ average_yield }} kgs/acre</p>
+                <p>Estimated Production for {{ land_size }} acres: {{ estimated_production }} kgs</p>
+                <form action="/" method="get">
+                    <button type="submit">Try Another Pincode</button>
+                </form>
+            ''', user_pincode=user_pincode, place_name=place_name, district=district, state_name=state_name,
+            temperature=temperature, humidity=humidity, predicted_crop=predicted_crop[0],
+            average_yield=average_yield, land_size=land_size, estimated_production=estimated_production)
+
         else:
             return jsonify({"error": "Pincode not found."}), 404
     except Exception as e:
@@ -86,4 +112,5 @@ def predict():
         return jsonify({"error": "Internal server error."}), 500
 
 if __name__ == "__main__":
+    # Run the Flask application
     app.run(host='0.0.0.0', port=5000)
