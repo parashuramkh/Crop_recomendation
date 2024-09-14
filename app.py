@@ -36,8 +36,8 @@ def fetch_weather_data(lat, lon, api_key):
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
-    user_pincode = data['pincode']
-    land_size = data['land_size']
+    user_pincode = data.get('pincode')
+    land_size = data.get('land_size')
 
     if user_pincode in pin_data['Pincode'].astype(str).values:
         row = pin_data[pin_data['Pincode'] == int(user_pincode)].iloc[0]
@@ -45,7 +45,7 @@ def predict():
         longitude = row['Longitude']
 
         # Fetch weather data
-        api_key = 'DCDVS6HGLC8S6F657B22M9NNM'  # Keep your API key here
+        api_key = os.getenv('API_KEY')  # Get the API key from environment variables
         weather_data = fetch_weather_data(latitude, longitude, api_key)
 
         if weather_data is None:
