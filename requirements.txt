@@ -5,3 +5,4 @@ scikit-learn==1.2.0
 Cython==0.29.30
 pandas==1.5.0
 joblib==1.2.0
+imbalanced-learn==0.9.0  # Include this if you are using SMOTE
