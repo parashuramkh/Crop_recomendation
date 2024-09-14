@@ -10,11 +10,11 @@ from sklearn.preprocessing import LabelEncoder
 app = Flask(__name__)
 
 # Load the datasets from the cloned GitHub repository
-pin_data = pd.read_csv('PIN.csv', encoding='latin1')
-apc_data = pd.read_csv('APC.csv', encoding='latin1')
+pin_data = pd.read_csv('Crop_recomendation/PIN.csv', encoding='latin1')
+apc_data = pd.read_csv('Crop_recomendation/APC.csv', encoding='latin1')
 
 # Load the model
-model = joblib.load('model.pkl')  # Ensure this path is correct
+model = joblib.load('Crop_recomendation/model.pkl')  # Ensure this path is correct
 
 # Initialize the label encoder
 label_encoder = LabelEncoder()
@@ -60,6 +60,15 @@ def index():
                     <input type="number" id="land_size_input" name="land_size" placeholder="Enter land size" required />
                 </div>
                 <button id="submit_button" type="submit">Get Optimized Crop</button>
+            </div>
+        </div>
+        <div class="footer">
+            <img src="https://static.wixstatic.com/media/7d5a65_9525c98a8a2c4c7e9193e78a3039d6bd~mv2.png/v1/fill/w_398,h_186,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Deenabandh_edited_edited.png" alt="Deenabandhu Logo" class="footer-image">
+            <div class="footer-text">
+                <p>All rights reserved (2024)</p>
+                <p>For any grievances, please reach out to:</p>
+                <p>Parashuram Hadimain, Email: <a href="mailto:parashuramsu@gmail.com">parashuramsu@gmail.com</a></p>
+                <p>Deenabandhu Social Service Organization, Email: <a href="mailto:harsh@deenabandhu.org.in">harsh@deenabandhu.org.in</a></p>
             </div>
         </div>
     '''
@@ -126,6 +135,16 @@ def predict():
                             color: #155724; /* Dark green title */
                             margin: 0;
                         }
+                        .header-images {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin: 10px 0;
+                        }
+                        .header-image {
+                            max-height: 50px; /* Optimize image size */
+                            margin: 0 10px;
+                        }
                         .container {
                             max-width: 600px;
                             margin: 20px auto;
@@ -153,6 +172,33 @@ def predict():
                         button:hover {
                             background-color: #218838;
                         }
+                        .footer {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between; /* Align footer content to the left and right */
+                            margin-top: 20px;
+                            padding: 10px;
+                            background-color: #f1f1f1;
+                            border-top: 1px solid #ccc;
+                        }
+                        .footer-image {
+                            max-height: 100px; /* Make the Deenabandhu logo bigger */
+                            margin-right: 20px; /* Space between logo and text */
+                        }
+                        .footer-text {
+                            text-align: left; /* Align footer text to the left */
+                        }
+                        .footer p {
+                            margin: 5px 0;
+                            font-size: 14px;
+                        }
+                        .footer a {
+                            color: #007bff;
+                            text-decoration: none;
+                        }
+                        .footer a:hover {
+                            text-decoration: underline;
+                        }
                     </style>
                 </head>
                 <body>
@@ -175,6 +221,15 @@ def predict():
                     <form action="/" method="get">
                         <button type="submit">Try Another Pincode</button>
                     </form>
+                    <div class="footer">
+                        <img src="https://static.wixstatic.com/media/7d5a65_9525c98a8a2c4c7e9193e78a3039d6bd~mv2.png/v1/fill/w_398,h_186,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Deenabandh_edited_edited.png" alt="Deenabandhu Logo" class="footer-image">
+                        <div class="footer-text">
+                            <p>All rights reserved (2024)</p>
+                            <p>For any grievances, please reach out to:</p>
+                            <p>Parashuram Hadimain, Email: <a href="mailto:parashuramsu@gmail.com">parashuramsu@gmail.com</a></p>
+                            <p>Deenabandhu Social Service Organization, Email: <a href="mailto:harsh@deenabandhu.org.in">harsh@deenabandhu.org.in</a></p>
+                        </div>
+                    </div>
                 </body>
                 </html>
             ''', user_name=user_name, user_pincode=user_pincode, place_name=place_name, district=district, state_name=state_name,
