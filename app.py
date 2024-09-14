@@ -1,56 +1,9 @@
-from flask import Flask, request, jsonify, render_template_string
-import pandas as pd
-import numpy as np
-import joblib
-import urllib.request
-import json
-from datetime import datetime
-from sklearn.preprocessing import LabelEncoder
-from pyngrok import ngrok  # Import ngrok
-
-app = Flask(__name__)
-
-# Load the datasets from the cloned GitHub repository
-pin_data = pd.read_csv('PIN.csv', encoding='latin1')
-apc_data = pd.read_csv('APC.csv', encoding='latin1')
-
-# Load the model
-model = joblib.load('model.pkl')  # Ensure this path is correct
-
-# Initialize the label encoder
-label_encoder = LabelEncoder()
-label_encoder.fit(apc_data['Crop'].unique())  # Ensure 'Crop' column exists in apc_data
-
-# Directly define your API key
-API_KEY = 'DCDVS6HGLC8S6F657B22M9NNM'  # Replace with your actual API key
-
-def fetch_weather_data(lat, lon, start_date):
-    weather_api_query = f'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{lat},{lon}/{start_date}?unitGroup=us&key={API_KEY}&contentType=json'
-    print(f"Fetching weather data from: {weather_api_query}")  # Log the URL
-    try:
-        response = urllib.request.urlopen(weather_api_query)
-        data = response.read()
-        return json.loads(data.decode('utf-8'))
-    except Exception as e:
-        print(f"Error fetching weather data: {e}")
-        return None
-
-@app.route('/')
-def index():
-    return '''
-        <h1>Crop Recommendation</h1>
-        <form method="post" action="/predict">
-            <label for="pincode">Enter Pincode:</label>
-            <input type="text" id="pincode" name="pincode" required>
-            <label for="land_size">Enter Land Size (acres):</label>
-            <input type="number" id="land_size" name="land_size" step="0.1" required>
-            <button type="submit">Submit</button>
-        </form>
-    '''
-
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
+        # Debugging: Print the form data received
+        print("Form data received:", request.form)
+
         user_pincode = request.form['pincode']
         land_size = float(request.form['land_size'])
 
@@ -108,15 +61,3 @@ def predict():
     except Exception as e:
         print(f"Error in /predict: {e}")
         return jsonify({"error": "Internal server error."}), 500
-
-if __name__ == "__main__":
-    # Set ngrok authentication token
-    my_authtoken = "2l4SRgwqf4aM3KZ6b3icGXoo734_4wbwmJBhbcBRecVt3pQgs"
-    ngrok.set_auth_token(my_authtoken)
-
-    # Start ngrok
-    public_url = ngrok.connect(5000)
-    print(f" * ngrok tunnel \"{public_url}\" -> \"http://127.0.0.1:5000/\"")
-
-    # Run the Flask application
-    app.run(port=5000)
