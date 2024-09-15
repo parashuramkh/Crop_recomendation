@@ -37,7 +37,8 @@ def fetch_weather_data(lat, lon, start_date):
 @app.route('/')
 def index():
     return '''
-        <h1>Crop Recommendation</h1>
+        <h1>Welcome to Crop Optimization system</h1>
+        <p>Please provide your Pincode and Land Size area to predict the optimized crop and estimation of the yield</p>
         <form method="post" action="/predict">
             <label for="pincode">Enter Pincode:</label>
             <input type="text" id="pincode" name="pincode" required>
